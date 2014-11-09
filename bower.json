@@ -1,0 +1,31 @@
+{
+  "name": "purescript-virtual-dom-typed",
+  "version": "0.0.1",
+  "homepage": "https://github.com/mechairoi/purescript-virtual-dom-typed",
+  "authors": [
+    "mechairoi <ttsujikawa@gmail.com>"
+  ],
+  "keywords": [
+    "purescript",
+    "virtualdom"
+  ],
+  "license": "BSD3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "purescript-virtual-dom": "*",
+    "purescript-maps": "~0.1.1",
+    "purescript-foreign": "~0.2.0",
+    "purescript-tuples": "~0.2.2",
+    "purescript-maybe": "~0.2.1"
+  },
+  "devDependencies": {
+    "purescript-dom": "~0.1.1",
+    "purescript-refs": "~0.1.1"
+  }
+}
