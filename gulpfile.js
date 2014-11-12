@@ -17,7 +17,7 @@ var paths = {
   dest: '',
   docs: {
     'VirtualDOM.Typed': {
-      dest: 'README.md',
+      dest: 'src/VirtualDOM/README.md',
       src: 'src/VirtualDOM/Typed.purs'
     },
     'VirtualDOM.Typed.*': {
