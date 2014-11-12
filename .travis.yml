@@ -1,0 +1,12 @@
+language: haskell
+ghc: 7.8
+install:
+  - cabal install purescript --force-reinstalls
+  - apt-get install node bower
+  - npm install -g bower
+notifications:
+  email: true
+script:
+  - npm install
+  - bower install
+  - $(npm bin)/gulp browserify
