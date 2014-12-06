@@ -83,8 +83,6 @@ foreign import hookWrapper " \
  \ var hookWrapper = (function() { \
  \   function _Hook(hook) { this.value = hook; }; \
  \   _Hook.prototype.hook = function(node, propertyName) { \
- \     console.log(this.value); \
- \     console.log(arguments); \
  \     (this.value)(node)(propertyName)(); \
  \   }; \
  \   return function(hook) { \
