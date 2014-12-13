@@ -2,4 +2,4 @@ purescript-virtual-dom-typed [![Build Status](https://travis-ci.org/mechairoi/pu
 ===
 typed wrapper for purescript-virtual-dom
 
-- [Module documentation](src/VirtualDOM/README.md)
+- [Module documentation](MODULE.md)

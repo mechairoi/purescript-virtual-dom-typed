@@ -2,101 +2,56 @@
 
 var gulp        = require('gulp')
   , purescript  = require('gulp-purescript')
-  , run         = require('gulp-run')
-  , runSequence = require('run-sequence')
   , source      = require('vinyl-source-stream')
   , browserify  = require('browserify')
+  , transform   = require('vinyl-transform')
+  , path        = require("path")
   ;
+
+var browserified = transform(function(filename){
+  return browserify(filename).bundle();
+});
 
 var paths = {
   src: 'src/**/*.purs',
-  bowerSrc: [
-    'bower_components/purescript-*/src/**/*.purs',
-    'bower_components/purescript-*/src/**/*.purs.hs'
-  ],
-  dest: '',
-  docs: {
-    'VirtualDOM.Typed': {
-      dest: 'src/VirtualDOM/README.md',
-      src: 'src/VirtualDOM/Typed.purs'
-    },
-    'VirtualDOM.Typed.*': {
-      dest: 'src/VirtualDOM/Typed/README.md',
-      src: 'src/VirtualDOM/Typed/*.purs'
-    }
-  },
+  doc: 'MODULE.md',
+  bowerSrc: 'bower_components/purescript-*/src/**/*.purs',
+  dest: 'output',
   test: 'examples/*.purs'
 };
 
-var options = {
-  test: {
-    main: 'Test.VirtualDom.Typed',
-    output: 'test/test.js'
-  }
-};
-
-function compile (compiler, src, opts) {
-  var psc = compiler(opts);
-  psc.on('error', function(e) {
-    console.error(e.message);
-    psc.end();
-  });
-  return gulp.src(src.concat(paths.bowerSrc))
-    .pipe(psc)
-    .pipe(gulp.dest(paths.dest));
-};
-
-function docs (target) {
-  return function() {
-    var docgen = purescript.docgen();
-    docgen.on('error', function(e) {
-      console.error(e.message);
-      docgen.end();
-    });
-    return gulp.src(paths.docs[target].src)
-      .pipe(docgen)
-      .pipe(gulp.dest(paths.docs[target].dest));
-  };
-}
-
-function sequence () {
-  var args = [].slice.apply(arguments);
-  return function() {
-    runSequence.apply(null, args);
-  };
-}
-
-gulp.task('browser', function() {
-  return compile(purescript.psc, [paths.src].concat(paths.bowerSrc), {});
-});
-
 gulp.task('make', function() {
-  return compile(purescript.pscMake, [paths.src].concat(paths.bowerSrc), {});
+  return gulp.src([paths.src].concat(paths.bowerSrc))
+    .pipe(purescript.pscMake({}))
+    .pipe(gulp.dest(paths.dest));
 });
 
-gulp.task('test', function() {
-  return compile(purescript.psc, [paths.src, paths.test].concat(paths.bowerSrc), options.test);
-    // .pipe(run('node').exec());
+gulp.task('test-make', function() {
+  return gulp.src([paths.src, paths.test].concat(paths.bowerSrc))
+    .pipe(purescript.pscMake({}))
+    .pipe(gulp.dest(paths.dest));
 });
 
-gulp.task('browserify', ['test'], function() {
-  return browserify('./test/test.js')
-    .bundle()
-    .pipe(source('test.browserified.js'))
+gulp.task('test', ['test-make'], function() {
+  var nodePath = process.env.NODE_PATH;
+  var buildPath = path.resolve(paths.dest);
+  process.env["NODE_PATH"] = nodePath ? (buildPath + ":" + nodePath) : buildPath;
+  return browserify({
+    entries: "../examples/test.js",
+    basedir: buildPath
+  }).bundle()
+    .pipe(source('test.js'))
     .pipe(gulp.dest('./test/'));
 });
 
-gulp.task('docs-VirtualDOM.Typed', docs('VirtualDOM.Typed'));
-gulp.task('docs-VirtualDOM.Typed.*', docs('VirtualDOM.Typed.*'));
-
-gulp.task('docs', ['docs-VirtualDOM.Typed', 'docs-VirtualDOM.Typed.*']);
-
-gulp.task('watch-browser', function() {
-  gulp.watch(paths.src, sequence('browser', 'docs'));
+gulp.task('docs', function() {
+  return gulp.src(paths.src)
+    .pipe(purescript.pscDocs())
+    .pipe(gulp.dest(paths.doc));
 });
 
-gulp.task('watch-make', function() {
-  gulp.watch(paths.src, sequence('make', 'docs'));
+gulp.task('watch', function() {
+  gulp.watch(paths.src, ['make', 'docs']);
 });
 
-gulp.task('default', sequence('make', 'docs'));
+gulp.task('default', ['make', 'docs']);

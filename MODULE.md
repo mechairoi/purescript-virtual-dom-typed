@@ -6,7 +6,7 @@
 
     newtype Attr
 
-    type AttributeName  = String
+    type AttributeName = String
 
     newtype CssProperty
 

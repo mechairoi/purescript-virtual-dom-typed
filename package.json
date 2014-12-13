@@ -3,15 +3,14 @@
   "version": "0.0.1",
   "description": "typed wrapper for purescript-virtual-dom",
   "dependencies": {
-    "virtual-dom": "*",
+    "virtual-dom": "0.0.23",
     "vtree": "*"
   },
   "devDependencies": {
-    "browserify": "^6.2.0",
+    "browserify": "^7.0.0",
     "gulp": "^3.8.10",
-    "gulp-purescript": "0.0.12",
-    "gulp-run": "https://registry.npmjs.org/gulp-run/-/gulp-run-1.6.4.tgz",
-    "run-sequence": "^1.0.1",
-    "vinyl-source-stream": "^1.0.0"
+    "gulp-purescript": "^0.1.2",
+    "vinyl-source-stream": "^1.0.0",
+    "vinyl-transform": "^1.0.0"
   }
 }
