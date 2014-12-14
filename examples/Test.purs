@@ -16,14 +16,15 @@ main = do
   documentBodyAppendChild(st.node)
   update refSt st.app
 
-foreign import documentBodyAppendChild " \
-  \ function documentBodyAppendChild(node) { \
-  \   return function() { \
-  \     window.onload = function() { \
-  \       document.body.appendChild(node); \
-  \     }; \
-  \   }; \
-  \ } " :: forall e. V.DOMNode -> Eff (dom :: V.DOM | e) Unit
+foreign import documentBodyAppendChild """
+  function documentBodyAppendChild(node) {
+    return function() {
+      window.onload = function() {
+        document.body.appendChild(node);
+      };
+    };
+  }
+""" :: forall e. V.DOMNode -> Eff (dom :: V.DOM | e) Unit
 
 initState :: forall e. Eff (ref :: Ref | e) (RefVal State)
 initState = do

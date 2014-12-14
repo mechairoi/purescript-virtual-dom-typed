@@ -71,25 +71,26 @@ instance attributeHook :: Attribute (Hook eff a) where
   attrName (Hook h) = h.attrName
   attrValue h = hookWrapper h
 
-foreign import handlerWrapper " \
- \ function handlerWrapper(handler) { \
- \   return function(event) { \
- \     handler.handler(event)(); \
- \   }; \
- \ } " :: forall eff a. (Handler eff a) -> Foreign
+foreign import handlerWrapper """
+ function handlerWrapper(handler) {
+   return function(event) {
+     handler.handler(event)();
+   };
+ }
+""" :: forall eff a. (Handler eff a) -> Foreign
 
 -- XXX node type is VTree?
-foreign import hookWrapper " \
- \ var hookWrapper = (function() { \
- \   function _Hook(hook) { this.value = hook; }; \
- \   _Hook.prototype.hook = function(node, propertyName) { \
- \     (this.value)(node)(propertyName)(); \
- \   }; \
- \   return function(hook) { \
- \     return new _Hook(hook.hook); \
- \   }; \
- \ })(); \
- \ " :: forall eff a. (Hook eff a) -> Foreign
+foreign import hookWrapper """
+ var hookWrapper = (function() {
+   function _Hook(hook) { this.value = hook; };
+   _Hook.prototype.hook = function(node, propertyName) {
+     (this.value)(node)(propertyName)();
+   };
+   return function(hook) {
+     return new _Hook(hook.hook);
+   };
+ })();
+""" :: forall eff a. (Hook eff a) -> Foreign
 
 node :: forall a. (Attribute a) => TagName -> [a] -> [VTree] -> Maybe Key -> Maybe Namespace -> VTree
 node tagName attrs contents key ns = vnode tagName (attrsToRecord attrs) contents key ns
