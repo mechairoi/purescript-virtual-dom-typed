@@ -8,8 +8,9 @@ import Control.Monad.Eff.Ref
 import Data.Maybe
 import Data.Function
 import Prelude
+import DOM
 
-main :: forall e. Eff (dom :: V.DOM, ref :: Ref | e) Unit
+main :: forall e. Eff (dom :: DOM, ref :: Ref | e) Unit
 main = do
   refSt <- initState
   (State st) <- readRef refSt
@@ -24,19 +25,19 @@ foreign import documentBodyAppendChild """
       };
     };
   }
-""" :: forall e. V.DOMNode -> Eff (dom :: V.DOM | e) Unit
+""" :: forall e. DOM.Node -> Eff (dom :: DOM | e) Unit
 
 initState :: forall e. Eff (ref :: Ref | e) (RefVal State)
 initState = do
   let tree = (node "div" ([] :: [Attr]) [] Nothing Nothing) :: VTree
-  let node = V.createElement tree :: V.DOMNode
+  let node = V.createElement tree :: Node
   newRef $ State { app: 0, tree: tree, node: node }
 
 type AppState = Number
 
 newtype State = State { app :: AppState
                       , tree :: VTree
-                      , node :: V.DOMNode
+                      , node :: DOM.Node
                       }
 
 render :: RefVal State -> AppState -> VTree
@@ -48,12 +49,12 @@ render refSt app = node "div" ([] :: [Attr])
       Nothing Nothing
   ] Nothing Nothing
 
-increment :: forall e. RefVal State -> Eff (dom :: V.DOM, ref :: Ref | e) Unit
+increment :: forall e. RefVal State -> Eff (dom :: DOM, ref :: Ref | e) Unit
 increment refSt = do
   (State st) <- readRef refSt
   update refSt (st.app + 1)
 
-update :: forall e. RefVal State -> AppState -> Eff (dom :: V.DOM, ref :: Ref | e) Unit
+update :: forall e. RefVal State -> AppState -> Eff (dom :: DOM, ref :: Ref | e) Unit
 update refSt app = do
   let newTree = render refSt app
   (State st) <- readRef refSt
