@@ -1,4 +1,4 @@
-module Test.VirtualDom.Typed where
+module Test.VirtualDOM.Typed where
 
 import qualified VirtualDOM as V
 import VirtualDOM.VTree
