@@ -25,7 +25,6 @@
     "purescript-maybe": "~0.2.1"
   },
   "devDependencies": {
-    "purescript-dom": "~0.1.1",
     "purescript-refs": "~0.1.1"
   }
 }
