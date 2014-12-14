@@ -50,6 +50,11 @@ gulp.task('docs', function() {
     .pipe(gulp.dest(paths.doc));
 });
 
+gulp.task('psci', function() {
+  return gulp.src([paths.src, paths.test].concat(paths.bowerSrc))
+    .pipe(purescript.dotPsci());
+});
+
 gulp.task('watch', function() {
   gulp.watch(paths.src, ['make', 'docs']);
 });
