@@ -11,4 +11,4 @@ notifications:
 script:
   - npm install
   - bower install
-  - $(npm bin)/gulp browserify
+  - $(npm bin)/gulp test
