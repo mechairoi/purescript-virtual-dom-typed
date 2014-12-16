@@ -1,6 +1,6 @@
 {
   "name": "purescript-virtual-dom-typed",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/mechairoi/purescript-virtual-dom-typed",
   "authors": [
     "mechairoi <ttsujikawa@gmail.com>"
