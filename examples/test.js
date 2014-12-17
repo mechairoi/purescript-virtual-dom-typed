@@ -1,1 +1,1 @@
-require('Test.VirtualDOM.Typed').main();
+require('Test.VirtualDOM.VTree.Typed').main();

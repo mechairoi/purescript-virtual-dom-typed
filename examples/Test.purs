@@ -1,8 +1,7 @@
-module Test.VirtualDOM.Typed where
+module Test.VirtualDOM.VTree.Typed where
 
 import qualified VirtualDOM as V
-import VirtualDOM.VTree
-import VirtualDOM.Typed
+import VirtualDOM.VTree.Typed
 import Control.Monad.Eff
 import Control.Monad.Eff.Ref
 import Data.Maybe
@@ -29,8 +28,8 @@ foreign import documentBodyAppendChild """
 
 initState :: forall e. Eff (ref :: Ref | e) (RefVal State)
 initState = do
-  let tree = (node "div" ([] :: [Attr]) [] Nothing Nothing) :: VTree
-  let node = V.createElement tree :: Node
+  let tree = (vnode "div" [] [] Nothing Nothing)
+  let node = V.createElement tree
   newRef $ State { app: 0, tree: tree, node: node }
 
 type AppState = Number
@@ -41,9 +40,9 @@ newtype State = State { app :: AppState
                       }
 
 render :: RefVal State -> AppState -> VTree
-render refSt app = node "div" ([] :: [Attr])
-  [ node "p" ([] :: [Attr]) [ vtext $ show app ] Nothing Nothing
-  , node "button"
+render refSt app = vnode "div" ([])
+  [ vnode "p" ([]) [ vtext $ show app ] Nothing Nothing
+  , vnode "button"
       [ handler "onclick" \e -> increment refSt ]
       [ vtext "++" ]
       Nothing Nothing
