@@ -40,8 +40,8 @@ newtype State = State { app :: AppState
                       }
 
 render :: RefVal State -> AppState -> VTree
-render refSt app = vnode "div" ([])
-  [ vnode "p" ([]) [ vtext $ show app ] Nothing Nothing
+render refSt app = vnode "div" []
+  [ vnode "p" [] [ vtext $ show app ] Nothing Nothing
   , vnode "button"
       [ handler "onclick" \e -> increment refSt ]
       [ vtext "++" ]
