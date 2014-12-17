@@ -18,13 +18,12 @@ var paths = {
 gulp.task('make', function() {
   return gulp.src([paths.src].concat(paths.bowerSrc))
     .pipe(purescript.pscMake({}))
-    .pipe(gulp.dest(paths.dest));
+    .pipe(purescript.pscMake({output: paths.dest}));
 });
 
 gulp.task('test-make', function() {
   return gulp.src([paths.src, paths.test].concat(paths.bowerSrc))
-    .pipe(purescript.pscMake({}))
-    .pipe(gulp.dest(paths.dest));
+    .pipe(purescript.pscMake({output: paths.dest}));
 });
 
 gulp.task('test', ['test-make'], function() {
