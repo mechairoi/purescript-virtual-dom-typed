@@ -1,61 +1,37 @@
 # Module Documentation
 
-## Module VirtualDOM.Typed
+## Module VirtualDOM.VTree.Typed
 
 ### Types
 
-    newtype Attr
+    data Attribute
 
     type AttributeName = String
 
-    newtype CssProperty
+    data CssProperty
 
-    newtype Handler eff a
+    type Handler eff = Foreign -> Eff eff Unit
 
-    newtype Hook eff a
+    type Key = String
 
-    newtype Style
+    type Namespace = String
 
-    newtype Toggle
+    type TagName = String
 
-
-### Type Classes
-
-    class Attribute a where
-      attrName :: a -> AttributeName
-      attrValue :: a -> Foreign
-
-
-### Type Class Instances
-
-    instance attributeAttr :: Attribute Attr
-
-    instance attributeHandler :: Attribute (Handler eff a)
-
-    instance attributeHook :: Attribute (Hook eff a)
-
-    instance attributeStyle :: Attribute Style
-
-    instance attributeToggle :: Attribute Toggle
+    type VTree = VT.VTree
 
 
 ### Values
 
-    attr :: AttributeName -> String -> Attr
+    attr :: AttributeName -> String -> Attribute
 
-    handler :: forall eff a. AttributeName -> (Foreign -> Eff eff a) -> Handler eff a
+    css :: String -> String -> CssProperty
 
-    hook :: forall eff a. AttributeName -> (VTree -> String -> Eff eff a) -> Hook eff a
+    handler :: forall eff. AttributeName -> Handler eff -> Attribute
 
-    key :: String -> Key
+    toggle :: AttributeName -> Boolean -> Attribute
 
-    node :: forall a. (Attribute a) => TagName -> [a] -> [VTree] -> Maybe Key -> Maybe Namespace -> VTree
-
-    prop :: String -> String -> CssProperty
-
-    style :: [CssProperty] -> Style
-
-    toggle :: AttributeName -> Boolean -> Toggle
+    vnode :: TagName -> [Attribute] -> [VTree] -> Maybe Key -> Maybe Namespace -> VTree
 
 
 
