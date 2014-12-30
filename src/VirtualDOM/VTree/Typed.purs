@@ -11,14 +11,14 @@ module VirtualDOM.VTree.Typed
   , Attribute()
   , AttributeName()
   , Handler()
-  , CssProperty()
+  -- , CssProperty()
   -- , Hook()
   , attr
   , toggle
   -- , style
   , handler
   -- , hook
-  , css
+  -- , css
   ) where
 
 import VirtualDOM
@@ -45,17 +45,11 @@ foreign import vnode' """
       return new VNode(name, props, children, key, ns);
     };
   }());
-  """ :: forall props. Fn5 TagName { | props } [VTree] Key Namespace VTree
+  """ :: Fn5 TagName (StrMap Foreign) [VTree] Key Namespace VTree
 
 vnode :: TagName -> [Attribute] -> [VTree] -> Maybe Key -> Maybe Namespace -> VTree
 vnode tagName attrs children key ns =
-  runFn5 vnode' tagName (attrsToRecord attrs) children (fromMaybe unsafeNull key) (fromMaybe unsafeNull ns)
-  where attrsToRecord :: forall props. [Attribute] -> { | props }
-        attrsToRecord attrs = unsafeCoerce $ Data.StrMap.fromList $ Data.Array.map attrToTuple attrs
-        unsafeStrMapToRecord :: forall props. StrMap Foreign -> { | props }
-        unsafeStrMapToRecord = unsafeCoerce
-        attrToTuple :: Attribute -> Tuple AttributeName Foreign
-        attrToTuple a = Tuple (attrName a) (attrValue a)
+  runFn5 vnode' tagName (Data.StrMap.fromList attrs) children (fromMaybe unsafeNull key) (fromMaybe unsafeNull ns)
 
 foreign import unsafeNull
   "var unsafeNull = null;" :: forall a. a
@@ -74,50 +68,19 @@ type Handler eff = Foreign -> Eff eff Unit
 
 type AttributeName = String
 
-data Attribute = StringAttribute AttributeName String
-               | ToggleAttribute AttributeName Boolean
-               -- | StyleAttribute [CssProperty]
-               | HandlerAttribute AttributeName (forall eff. Handler eff)
-               -- | HookAttribute -- TODO implement
+type Attribute = Tuple AttributeName Foreign
 
 attr :: AttributeName -> String -> Attribute
-attr = StringAttribute
+attr name value = Tuple name $ toForeign value
 
 toggle :: AttributeName -> Boolean -> Attribute
-toggle = ToggleAttribute
+toggle name value = Tuple name $ toForeign value
 
 -- style :: forall eff. [CssProperty] -> Attribute
 -- style = StyleAttribute
 
 handler :: forall eff. AttributeName -> Handler eff -> Attribute
-handler name handler = HandlerAttribute name (unsafeCoerce handler)
-                       -- XXX should not use unsafeCoerce
-
--- hook :: AttributeName -> Hook eff -> Attribute
--- hook = HookAttribute
-
-data CssProperty = CssProperty String String
-
-css :: String -> String -> CssProperty
-css = CssProperty
-
-attrName (StringAttribute name value) = name
-attrName (ToggleAttribute name value) = name
--- attrName (StyleAttribute a) = "style"
-attrName (HandlerAttribute name value) = name
--- attrName (HookAttribute name value) = name
-
-attrValue (StringAttribute name value) = toForeign value
-attrValue (ToggleAttribute name value) = toForeign value
--- attrValue (StyleAttribute a) = toForeign $ cssPropertiesToRecord a.props
-  where cssPropertiesToRecord :: forall props a. [CssProperty] -> { | props }
-        cssPropertiesToRecord ps = unsafeStrMapToRecord
-                               $ Data.StrMap.fromList
-                               $ Data.Array.map (\(CssProperty k v) -> Tuple k v) ps
-        unsafeStrMapToRecord :: forall props. StrMap String -> { | props }
-        unsafeStrMapToRecord = unsafeCoerce
-attrValue (HandlerAttribute name value) = handlerWrapper value
--- attrValue (HookAttribute name value) = hookWrapper value
+handler name handler = Tuple name $ handlerWrapper handler
 
 foreign import handlerWrapper """
   function handlerWrapper(handler) {
@@ -127,18 +90,12 @@ foreign import handlerWrapper """
   }
   """ :: forall eff. Handler eff -> Foreign
 
--- XXX: not implemented
--- foreign import hookWrapper """
---  var hookWrapper = (function() {
---    function _Hook(hook) { this.value = hook; };
---    _Hook.prototype.hook = function(node, propertyName) {
---      (this.value)(node)(propertyName)();
---    };
---    return function(hook) {
---      return new _Hook(hook);
---    };
---  })();
--- """ :: forall eff a. (Hook eff) -> Foreign
+-- hook :: AttributeName -> Hook eff -> Attribute
+
+-- data CssProperty = CssProperty String String
+
+-- css :: String -> String -> CssProperty
+-- css = CssProperty
 
 unsafeCoerce :: forall a b. a -> b
 unsafeCoerce x = unsafeFromForeign (toForeign x)
