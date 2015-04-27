@@ -40,7 +40,7 @@ type Namespace = String
 
 foreign import vnode' """
   var vnode$prime = (function() {
-    var VNode = require('vtree/vnode');
+    var VNode = require('virtual-dom/vnode/vnode');
     return function (name, props, children, key, ns) {
       return new VNode(name, props, children, key, ns);
     };
