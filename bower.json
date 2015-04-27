@@ -18,7 +18,7 @@
     "tests"
   ],
   "dependencies": {
-    "purescript-virtual-dom": "~0.2.0",
+    "purescript-virtual-dom": "~0.3.0",
     "purescript-maps": "~0.3.1",
     "purescript-foreign": "~0.4.0",
     "purescript-tuples": "~0.3.0",

@@ -2,12 +2,12 @@
   "name": "purescript-virtual-dom-typed",
   "version": "0.0.1",
   "description": "typed wrapper for purescript-virtual-dom",
+  "private": true,
   "dependencies": {
-    "virtual-dom": "0.0.23",
-    "vtree": "*"
+    "virtual-dom": "1.0.0"
   },
   "devDependencies": {
-    "browserify": "^7.0.0",
+    "browserify": "^9.0.8",
     "gulp": "^3.8.10",
     "gulp-purescript": "^0.1.2",
     "vinyl-source-stream": "^1.0.0"
